@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101827">
+<title>Office Bingo</title>
+<style>
+:root{color-scheme:dark;--bg:#101827;--panel:#192438;--tile:#202e45;--line:#35445d;--text:#f4f6fb;--muted:#a9b8cb;--accent:#69e0b2;--ink:#10291f;--gold:#ffda8b;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0,#24334e 0,var(--bg) 60%);color:var(--text);-webkit-tap-highlight-color:transparent}main{max-width:680px;margin:auto;padding: max(24px,env(safe-area-inset-top)) 12px max(24px,env(safe-area-inset-bottom))}header{padding:0 3px 20px}.eyebrow{font-size:.72rem;font-weight:800;letter-spacing:.18em;color:var(--accent);text-transform:uppercase}h1{font-size:clamp(2rem,8vw,3.8rem);letter-spacing:-.06em;line-height:1;margin:8px 0 10px}p{margin:0;color:var(--muted);font-size:.9rem;line-height:1.5}.score{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 15px;background:var(--panel);border:1px solid var(--line);border-radius:15px;margin-bottom:12px}.score strong{font-variant-numeric:tabular-nums;font-size:1.15rem;display:block}.score small{color:var(--muted);font-size:.72rem}.score div:last-child{text-align:right}.progress{height:5px;border-radius:10px;background:var(--line);overflow:hidden;margin:0 3px 14px}.progress span{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}.letters,.board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}.letters{margin:0 0 6px;text-align:center;color:var(--muted);font-weight:850;font-size:.95rem;letter-spacing:.12em}.board button{appearance:none;min-width:0;min-height:clamp(76px,20vw,118px);padding:17px 3px 6px;position:relative;background:var(--tile);color:var(--text);border:1px solid var(--line);border-radius:9px;font:inherit;font-size:clamp(.65rem,2.7vw,.92rem);font-weight:650;line-height:1.18;overflow-wrap:anywhere;hyphens:auto;cursor:pointer;touch-action:manipulation;transition:background .12s,border-color .12s;display:grid;place-items:center}.board button[aria-pressed=true]{background:var(--accent);color:var(--ink);border-color:var(--accent)}.board button.winner{outline:2px solid var(--gold);outline-offset:-3px}.mark{position:absolute;top:3px;right:5px;font-size:.75rem;line-height:1.1}.board button:focus-visible,button:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}.status{margin:13px 0;min-height:25px;text-align:center;font-size:.95rem;font-weight:750;color:var(--accent)}.actions{display:flex;flex-wrap:wrap;gap:8px}.actions button,.editor button{background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:11px 14px;min-height:44px;font:inherit;font-size:.85rem;font-weight:650;cursor:pointer;touch-action:manipulation}.actions button{flex:1}.editor .primary{background:var(--accent);color:var(--ink);border-color:var(--accent)}footer{margin-top:16px;text-align:center;font-size:.75rem;color:var(--muted);line-height:1.5}.editor{padding:16px;background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-top:12px}.editor h2{font-size:1.1rem;margin:0 0 8px}.editor textarea{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px;font:inherit;font-size:16px;line-height:1.5;resize:vertical;margin:10px 0}.editor .actions{margin-top:10px}.error{color:#ffb5a8;font-size:.8rem;min-height:1.2em}.storage-warning{color:var(--gold);margin-top:10px;font-size:.8rem} [hidden]{display:none!important}@media(min-width:480px){main{padding-left:22px;padding-right:22px}.letters,.board{gap:9px}.board button{padding:20px 9px 10px;border-radius:12px}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body><main>
+<header><div class="eyebrow">Survive the workday</div><h1>Office Bingo.</h1><p>Zaznacz, kiedy to się wydarzy. Pięć w linii i masz BINGO!</p></header>
+<section class="score" aria-label="Wynik"><div><strong id="count">1 / 25</strong><small>Zaznaczone pola</small></div><div><strong id="lines">0</strong><small>Pełne linie</small></div></section>
+<div class="progress" aria-hidden="true"><span id="progress"></span></div>
+<div class="letters" aria-hidden="true"><span>B</span><span>I</span><span>N</span><span>G</span><span>O</span></div>
+<section class="board" id="board" aria-label="Plansza bingo"></section>
+<div class="status" id="status" role="status" aria-live="polite"></div>
+<div class="actions"><button id="reset" type="button">↻ Reset planszy</button><button id="shuffle" type="button">⤨ Losuj układ</button><button id="edit" type="button" aria-controls="editor" aria-expanded="false">✎ Edytuj hasła</button></div>
+<section id="editor" class="editor" hidden><h2>Własne hasła</h2><p>Wpisz dokładnie 24 hasła, każde w osobnym wierszu. Środkowe pole jest zawsze darmowe. Zapis wyzeruje zaznaczenia.</p><textarea id="phrases" rows="12" aria-label="Hasła bingo" spellcheck="false"></textarea><div id="error" class="error" role="alert"></div><div class="actions"><button type="button" id="save" class="primary">Zapisz hasła</button><button type="button" id="defaults">Przywróć domyślne</button><button type="button" id="cancel">Anuluj</button></div></section>
+<footer>Bez logowania · bez serwera danych<br>Twoja plansza zapisuje się w tej przeglądarce.<div id="storage-warning" class="storage-warning" role="status" hidden>Przeglądarka blokuje zapis lokalny. Zaznaczenia mogą zniknąć po odświeżeniu.</div></footer>
+</main>
+<script>
+'use strict';
+const DEFAULT_PHRASES = [
+  'Jesteś na mute', 'Quick call?', 'U mnie działa', 'Spotkanie, które mogło być mailem', 'Ktoś zapomniał załącznika',
+  'ASAP', 'Nie mój ticket', 'Wrzuć na Jirę', 'Zróbmy follow-up', 'Kawa nr 3',
+  'VPN nie działa', 'Słychać mnie?', 'Ktoś mówi o AI', 'Działa po restarcie',
+  'Spotkanie się przedłuża', 'To nie bug, to feature', 'Ktoś udostępnia zły ekran', 'Zróbmy to offline', 'Pilne od zeszłego tygodnia',
+  'Deadline na wczoraj', 'Ktoś odpisuje Reply All', 'Nie było mnie w CC', 'To zależy', 'Piątek i pilny ticket'
+];
+const KEY='office-bingo-v1';
+const FREE=12;
+const LINES=[];
+for(let r=0;r<5;r++)LINES.push(Array.from({length:5},(_,c)=>r*5+c));
+for(let c=0;c<5;c++)LINES.push(Array.from({length:5},(_,r)=>r*5+c));
+LINES.push([0,6,12,18,24],[4,8,12,16,20]);
+const $=id=>document.getElementById(id);
+function newState(phrases=DEFAULT_PHRASES){return {phrases:[...phrases],marked:[FREE]};}
+function warn(){ $('storage-warning').hidden=false; }
+function load(){try{const raw=localStorage.getItem(KEY);if(raw){const s=JSON.parse(raw);if(Array.isArray(s.phrases)&&s.phrases.length===24&&s.phrases.every(p=>typeof p==='string'&&p.trim())&&Array.isArray(s.marked)){return {phrases:s.phrases,marked:[...new Set([FREE,...s.marked.filter(n=>Number.isInteger(n)&&n>=0&&n<25)])]};}}}catch(e){warn();}return newState();}
+let state=load();
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(state));$('storage-warning').hidden=true;}catch(e){warn();}}
+function completed(){return LINES.filter(line=>line.every(i=>state.marked.includes(i)));}
+function render(){const done=completed(),win=new Set(done.flat());const labels=[...state.phrases];labels.splice(FREE,0,'FREE SPACE');const board=$('board');board.replaceChildren();labels.forEach((label,i)=>{const b=document.createElement('button');b.type='button';b.dataset.index=i;b.setAttribute('aria-pressed',String(state.marked.includes(i)));if(i===FREE)b.setAttribute('aria-label','Darmowe pole, zawsze zaznaczone');if(win.has(i))b.classList.add('winner');const span=document.createElement('span');span.textContent=label;b.append(span);if(state.marked.includes(i)){const mark=document.createElement('span');mark.className='mark';mark.setAttribute('aria-hidden','true');mark.textContent='✓';b.append(mark);}b.addEventListener('click',()=>{if(i===FREE)return;state.marked=state.marked.includes(i)?state.marked.filter(n=>n!==i):[...state.marked,i];persist();render();if(document.activeElement===document.body)board.querySelector(`[data-index="${i}"]`).focus({preventScroll:true});});board.append(b);});$('count').textContent=`${state.marked.length} / 25`;$('lines').textContent=done.length;$('progress').style.width=`${state.marked.length/25*100}%`;$('status').textContent=state.marked.length===25?'🏆 PEŁNA PLANSZA!':done.length?`🎉 BINGO!${done.length>1?' × '+done.length:''}`:'Polowanie na biurowe klasyki trwa…';}
+function closeEditor(){ $('editor').hidden=true;$('edit').setAttribute('aria-expanded','false');$('error').textContent=''; }
+$('reset').addEventListener('click',()=>{if(state.marked.length===1||confirm('Wyczyścić wszystkie zaznaczenia?')){state.marked=[FREE];persist();render();}});
+$('shuffle').addEventListener('click',()=>{if(state.marked.length>1&&!confirm('Wylosować układ i wyczyścić zaznaczenia?'))return;for(let i=state.phrases.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[state.phrases[i],state.phrases[j]]=[state.phrases[j],state.phrases[i]];}state.marked=[FREE];persist();render();if(!$('editor').hidden)$('phrases').value=state.phrases.join('\n');});
+$('edit').addEventListener('click',()=>{if(!$('editor').hidden){closeEditor();return;}$('phrases').value=state.phrases.join('\n');$('editor').hidden=false;$('edit').setAttribute('aria-expanded','true');$('phrases').focus();});
+$('cancel').addEventListener('click',closeEditor);
+$('defaults').addEventListener('click',()=>{$('phrases').value=DEFAULT_PHRASES.join('\n');$('error').textContent='';});
+$('save').addEventListener('click',()=>{const p=$('phrases').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);if(p.length!==24){$('error').textContent=`Potrzeba 24 haseł. Teraz jest ${p.length}.`;return;}if(p.some(x=>x.length>120)){$('error').textContent='Każde hasło może mieć najwyżej 120 znaków.';return;}if(state.marked.length>1&&!confirm('Zapisać nowe hasła i wyczyścić zaznaczenia?'))return;state=newState(p);persist();render();closeEditor();});
+persist();render();
+</script></body></html>
